@@ -15,21 +15,26 @@
 	    String url = "jdbc:mysql://localhost:3306/jsp_testdb";
 	    String username = "root";
 	    String password = "1234";
-	    String sql = "delete from members where id = '" + mid+"'" ;
+//	    String sql = "delete from members where id = '" + mid +"'" ;
+	    String sql = "delete from members where id = ?"  ;
 	    
-	    Statement stmt = null;
+	    //Statement stmt = null;
 	    Connection conn = null; 
+	    PreparedStatement pstmt = null;
 	      
 	    try {
 	        Class.forName(driverName);//드라이버 로딩
 	        conn = DriverManager.getConnection(url, username, password);//연결 생성
-			stmt = conn.createStatement();
+//			stmt = conn.createStatement();
+	        pstmt= conn.prepareStatement(sql);
+	        pstmt.setString(1, mid); // spl문의 첫번째 ?에 mid 값을 대입한다
 	        
-	  	int dbFlag = stmt.executeUpdate(sql);
+//	  	int dbFlag = stmt.executeUpdate(sql);
+		int dbFlag = pstmt.executeUpdate();
 	  	if (dbFlag == 1){
-	    	out.print("성공");
+	    	out.print("탈퇴성공");
 	    }else{
-	    	out.print("실패");
+	    	out.print("탈퇴실패");
 	    }
 	  
 	         
@@ -40,8 +45,11 @@
 	         out.println("DB 연결 실패!!!!!");
 	    } finally {
 	       try {
-	    	  if(stmt != null) {
-	               stmt.close();
+	    	// if(stmt != null) {
+	        //       stmt.close();
+	        //  }
+	    	if(pstmt != null) {
+	             pstmt.close();
 	          }
 	          if(conn != null) {
 	               conn.close();
